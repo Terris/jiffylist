@@ -6,13 +6,13 @@ const Stack = createStackNavigator();
 
 export default function App() {
   return (
-    <>
+    <View>
       <NavigationContainer>
         <Stack.Navigator>
           <Stack.Screen name="Login" component={LoginScreen} />
         </Stack.Navigator>
       </NavigationContainer>
       <StatusBar />
-    </>
+    </View>
   );
 }
