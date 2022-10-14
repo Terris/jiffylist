@@ -10,6 +10,7 @@ interface AuthCredentials {
 interface AuthContextProps {
   user: User | null;
   error: string | null;
+  setError: (error: string | null) => void;
   loading: boolean;
   signUp: ({ email, password }: AuthCredentials) => void;
   signIn: ({ email, password }: AuthCredentials) => void;
@@ -23,6 +24,7 @@ interface AuthContextProviderProps {
 const AuthContext = createContext<AuthContextProps>({
   user: null,
   error: null,
+  setError: () => null,
   loading: false,
   signUp: () => null,
   signIn: () => null,
@@ -37,7 +39,6 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
 
   useEffect(() => {
     if (!user) {
-      console.warn('NO USER Logged In');
       return;
     }
 
@@ -85,6 +86,7 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
         setError(null);
         setLoading(true);
         await app.emailPasswordAuth.registerUser({ email, password });
+        signIn({ email, password });
       } catch (error: any) {
         setError(error.message);
       } finally {
@@ -108,6 +110,7 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
       value={{
         user,
         error,
+        setError,
         loading,
         signUp,
         signIn,
