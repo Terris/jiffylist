@@ -41,8 +41,8 @@ const styles = StyleSheet.create({
     opacity: 0.5,
   },
   buttonDisabled: {
-    backgroundColor: colors.disabled,
-    borderColor: colors.disabled,
+    backgroundColor: colors.primaryLight,
+    borderColor: colors.primaryLight,
   },
   buttonWarn: {
     backgroundColor: colors.alert,
@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
     fontFamily: 'OpenSans_400Regular',
     width: '100%',
     textAlign: 'center',
-    color: colors.primaryDark,
+    color: colors.white,
   },
   warnText: {
     color: colors.white,

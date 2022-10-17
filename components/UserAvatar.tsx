@@ -1,8 +1,8 @@
 import { StyleSheet, View } from 'react-native';
-import { Text } from '../components';
 import { colors } from '../styles/colors';
 import { firstLetter } from '../utils/stringUtils';
 import type { UserProfileProps } from '../types/db.types';
+import Text from './Text';
 
 type AvatarUserProfile = Pick<UserProfileProps, 'name'>;
 interface UserAvatarProps {
@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: colors.rifleGreen,
+    backgroundColor: colors.primary,
     borderRadius: 100,
   },
 });

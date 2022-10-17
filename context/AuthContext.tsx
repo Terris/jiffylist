@@ -2,10 +2,10 @@ import { createContext, useState, useContext, ReactNode, useEffect, useRef } fro
 import Realm, { User } from 'realm';
 import app from '../lib/Realm';
 
-interface AuthCredentials {
+type AuthCredentials = {
   email: string;
   password: string;
-}
+};
 
 interface AuthContextProps {
   user: User | null;
@@ -15,10 +15,6 @@ interface AuthContextProps {
   signUp: ({ email, password }: AuthCredentials) => void;
   signIn: ({ email, password }: AuthCredentials) => void;
   signOut: () => void;
-}
-
-interface AuthContextProviderProps {
-  children: ReactNode;
 }
 
 const AuthContext = createContext<AuthContextProps>({
@@ -31,7 +27,11 @@ const AuthContext = createContext<AuthContextProps>({
   signOut: () => null,
 });
 
-export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
+interface AuthContextProviderProps {
+  children: ReactNode;
+}
+
+export function AuthContextProvider({ children }: AuthContextProviderProps) {
   const realmRef = useRef<Realm | null>(null);
   const [user, setUser] = useState<User | null>(app.currentUser);
   const [error, setError] = useState<string | null>(null);
@@ -120,6 +120,6 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
       {children}
     </AuthContext.Provider>
   );
-};
+}
 
 export const useAuth = () => useContext(AuthContext);

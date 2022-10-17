@@ -1,23 +1,22 @@
 export const colors = {
-  black: '#000000',
+  black: '#000F08',
   white: '#ffffff',
-  middleYellowRed: '#e8b274',
-  rifleGreen: '#3E442B',
-  nickel: '#6A7062',
-  nickelLight: '#abb3a1',
-  cadetBlueCrayola: '#AAADC4',
-  columbiaBlue: '#D6EEFF',
-  roseDust: '#9D5C63',
+  darkJungleGreen: '#000F08',
+  pineGreen: '#136F63',
+  citrine: '#E0CA3C',
+  coquilicot: '#F34213',
+  russionViolet: '#3E2F5B',
+  lightGray: '#ededed',
   // Usage
   // ==============================
-  primary: '#e8b274',
-  primaryDark: '#664825',
-  primaryLight: '#f5d6a9',
+  primary: '#136F63', // pineGreen
+  primaryDark: '#0c4740',
+  primaryLight: '#1bcfb7',
   inactive: '#abb3a1',
-  disabled: '#f5d6a9',
-  alert: '#9D5C63',
-  success: '#D6EEFF',
+  disabled: '#ededed',
+  alert: '#F34213',
+  success: '#1bcfb7',
   border: {
-    primary: '#6A7062',
+    primary: '#ededed',
   },
 };

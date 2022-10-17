@@ -32,6 +32,9 @@ function TextInput({ onChangeText, value, placeholder, kind, disabled }: TextInp
       }
       secureTextEntry={kind === 'password' || kind === 'newPassword'}
       editable={!disabled}
+      autoCorrect={
+        kind === 'password' || kind === 'newPassword' || kind === 'email' ? false : undefined
+      }
     />
   );
 }
@@ -39,6 +42,7 @@ function TextInput({ onChangeText, value, placeholder, kind, disabled }: TextInp
 const styles = StyleSheet.create({
   input: {
     fontFamily: 'OpenSans_400Regular',
+    backgroundColor: colors.border.primary,
     borderColor: colors.border.primary,
     borderRadius: 3,
     borderWidth: 1,

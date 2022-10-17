@@ -1,17 +1,9 @@
-export type GameProps = {
-  id: string;
-  name: string;
-  userId: string;
-};
+import { ObjectId } from 'bson';
 
-export type FriendProps = {
-  id: string;
-  ownerId: string;
-  userIds: string[];
-  accepted?: boolean;
-};
-
-export type UserProfileProps = {
-  userId: string;
-  name?: string;
+export type ListItemProps = {
+  _id: ObjectId;
+  _partition?: string;
+  description: string;
+  created_at: Timestamp;
+  updated_at: Timestamp;
 };
