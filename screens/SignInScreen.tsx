@@ -1,45 +1,45 @@
-import { useEffect, useState } from 'react';
+import { useState, useCallback } from 'react';
 import { SafeAreaView } from 'react-native';
-import { ScreenWrapper, TextInput, Button, Alert } from '../components';
 import { useAuth } from '../context/AuthContext';
+import { ScreenWrapper, TextInput, Button, Alert, HideKeyboard } from '../components';
 
 function SignInScreen() {
-  const { signIn, error: serverError, setError: setServerError, loading } = useAuth();
-
+  const { error, loading, signIn } = useAuth();
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [validationMessage, setValidationMessage] = useState<string | null>(null);
 
-  function handleSignIn() {
-    setErrorMessage(null);
-    if (!email && !password) {
-      setErrorMessage('All fields are required.');
-    } else {
-      signIn({ email, password });
+  const handleSignIn = useCallback(async () => {
+    if (!email || !password) {
+      setValidationMessage('All fields are required.');
+      return;
     }
-  }
-
-  useEffect(() => {
-    if (serverError) {
-      setErrorMessage(serverError);
-      setServerError(null);
-    }
-  }, [serverError]);
+    await signIn({ email, password });
+  }, [email, password, signIn, setValidationMessage]);
 
   return (
     <ScreenWrapper>
-      <SafeAreaView style={{ width: '100%' }}>
-        <TextInput onChangeText={setEmail} value={email} placeholder="Email" kind="email" />
+      <HideKeyboard>
+        {error ? <Alert kind="error">{error}</Alert> : null}
+        {validationMessage ? <Alert kind="error">{validationMessage}</Alert> : null}
         <TextInput
+          label="Email"
+          onChangeText={setEmail}
+          value={email}
+          placeholder="Email"
+          kind="email"
+          disabled={loading}
+        />
+        <TextInput
+          label="Password"
           onChangeText={setPassword}
           value={password}
           placeholder="Password"
           kind="password"
           disabled={loading}
         />
-        {errorMessage ? <Alert kind="error">{errorMessage}</Alert> : null}
         <Button title="Sign In" onPress={handleSignIn} disabled={loading} />
-      </SafeAreaView>
+      </HideKeyboard>
     </ScreenWrapper>
   );
 }

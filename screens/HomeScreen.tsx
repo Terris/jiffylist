@@ -1,11 +1,11 @@
 import { View } from 'react-native';
-import { Text } from '../components';
+import { ScreenWrapper, Text } from '../components';
 
 function HomeScreen() {
   return (
-    <View>
+    <ScreenWrapper>
       <Text>Home Screen</Text>
-    </View>
+    </ScreenWrapper>
   );
 }
 

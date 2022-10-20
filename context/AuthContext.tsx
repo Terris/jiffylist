@@ -1,6 +1,7 @@
-import { createContext, useState, useContext, ReactNode, useEffect, useRef } from 'react';
-import Realm, { User } from 'realm';
-import app from '../lib/Realm';
+import { createContext, useState, useContext, ReactNode, useEffect } from 'react';
+import { Session } from '@supabase/supabase-js';
+import { supabase } from '../lib/supabase';
+import type { UserProfileProps } from '../types/db.types';
 
 type AuthCredentials = {
   email: string;
@@ -8,118 +9,146 @@ type AuthCredentials = {
 };
 
 interface AuthContextProps {
-  user: User | null;
-  error: string | null;
-  setError: (error: string | null) => void;
   loading: boolean;
-  signUp: ({ email, password }: AuthCredentials) => void;
-  signIn: ({ email, password }: AuthCredentials) => void;
+  error: string | null;
+  session: Session | null;
+  userProfile: UserProfileProps | null;
+  signUp: ({ email, password }: AuthCredentials) => Promise<void>;
+  signIn: ({ email, password }: AuthCredentials) => Promise<void>;
   signOut: () => void;
+  updateUserProfile: ({ username, website, avatarUrl }: UserProfileProps) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextProps>({
-  user: null,
-  error: null,
-  setError: () => null,
   loading: false,
-  signUp: () => null,
-  signIn: () => null,
+  error: null,
+  session: null,
+  userProfile: null,
+  signIn: () => Promise.resolve(),
+  signUp: () => Promise.resolve(),
   signOut: () => null,
+  updateUserProfile: async () => {},
 });
 
 interface AuthContextProviderProps {
   children: ReactNode;
 }
 
-export function AuthContextProvider({ children }: AuthContextProviderProps) {
-  const realmRef = useRef<Realm | null>(null);
-  const [user, setUser] = useState<User | null>(app.currentUser);
-  const [error, setError] = useState<string | null>(null);
+export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
   const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
+  const [userProfile, setUserProfile] = useState<UserProfileProps | null>(null);
 
   useEffect(() => {
-    if (!user) {
-      return;
-    }
-
-    const config = {
-      sync: {
-        user,
-        partitionValue: `user=${user.id}`,
-      },
-    };
-
-    // Open a realm with the logged in user's partition value
-    Realm.open(config as Realm.Configuration).then((userRealm) => {
-      realmRef.current = userRealm;
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
     });
 
-    return () => {
-      const userRealm = realmRef.current;
-      if (userRealm) {
-        userRealm.close();
-        realmRef.current = null;
-      }
-    };
-  }, [user]);
+    supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+  }, []);
 
-  const signIn = async ({ email, password }: AuthCredentials) => {
-    if (email && password) {
-      try {
-        setLoading(true);
-        const creds = Realm.Credentials.emailPassword(email, password);
-        const newUser = await app.logIn(creds);
-        setUser(newUser);
-      } catch (error: any) {
+  useEffect(() => {
+    if (session) getProfile();
+  }, [session]);
+
+  async function getProfile() {
+    try {
+      setLoading(true);
+      if (!session?.user) throw new Error('No user on the session!');
+
+      let { data, error, status } = await supabase
+        .from('profiles')
+        .select(`username, website, avatar_url`)
+        .eq('id', session?.user.id)
+        .single();
+      if (error && status !== 406) {
+        throw error;
+      }
+
+      if (data) {
+        setUserProfile({
+          username: data.username,
+          website: data.website,
+          avatarUrl: data.avatar_url,
+        });
+      }
+    } catch (error) {
+      if (error instanceof Error) {
         setError(error.message);
-      } finally {
-        setLoading(false);
       }
-    } else {
-      setError("Email and password can't be empty");
+    } finally {
+      setLoading(false);
     }
-  };
+  }
 
-  const signUp = async ({ email, password }: AuthCredentials) => {
-    if (email && password) {
-      try {
-        setError(null);
-        setLoading(true);
-        await app.emailPasswordAuth.registerUser({ email, password });
-        signIn({ email, password });
-      } catch (error: any) {
+  async function signIn({ email, password }: AuthCredentials) {
+    setLoading(true);
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) setError(error.message);
+    setLoading(false);
+  }
+
+  async function signUp({ email, password }: AuthCredentials) {
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.signUp({ email, password });
+      if (error) {
+        throw error;
+      }
+    } catch (error: any) {
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  function signOut() {
+    supabase.auth.signOut();
+  }
+
+  async function updateUserProfile({ username, website, avatarUrl }: UserProfileProps) {
+    try {
+      setLoading(true);
+      if (!session?.user) throw new Error('No user on the session!');
+      const updates = {
+        id: session?.user.id,
+        username,
+        website,
+        avatar_url: avatarUrl,
+        updated_at: new Date(),
+      };
+      let { error } = await supabase.from('profiles').upsert(updates);
+      if (error) {
+        throw error;
+      }
+    } catch (error) {
+      if (error instanceof Error) {
         setError(error.message);
-      } finally {
-        setLoading(false);
       }
-    } else {
-      setError("Email and password can't be empty");
+    } finally {
+      setLoading(false);
     }
-  };
-
-  const signOut = () => {
-    if (user == null) {
-      return;
-    }
-    user.logOut();
-    setUser(null);
-  };
+  }
 
   return (
     <AuthContext.Provider
       value={{
-        user,
-        error,
-        setError,
         loading,
+        error,
+        session,
+        userProfile,
         signUp,
         signIn,
         signOut,
+        updateUserProfile,
       }}
     >
       {children}
     </AuthContext.Provider>
   );
-}
+};
 
 export const useAuth = () => useContext(AuthContext);

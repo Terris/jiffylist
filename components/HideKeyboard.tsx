@@ -7,7 +7,7 @@ interface HideKeyboardProps {
 
 function HideKeyboard({ children }: HideKeyboardProps) {
   return (
-    <Pressable onPress={Keyboard.dismiss} accessible={false} style={{ flex: 1 }}>
+    <Pressable onPress={Keyboard.dismiss} accessible={false} style={{ flex: 1, width: '100%' }}>
       {children}
     </Pressable>
   );

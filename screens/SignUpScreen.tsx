@@ -1,39 +1,38 @@
-import { useEffect, useState } from 'react';
+import { useState, useCallback } from 'react';
 import { SafeAreaView } from 'react-native';
-import { ScreenWrapper, TextInput, Button, Alert } from '../components';
+import { ScreenWrapper, TextInput, Button, Alert, HideKeyboard } from '../components';
 import { useAuth } from '../context/AuthContext';
 
 function SignUpScreen() {
-  const { signUp, error: serverError, setError: setServerError, loading } = useAuth();
-
+  const { loading, error, signUp } = useAuth();
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [passwordConfirmation, setPasswordConfirmation] = useState<string>('');
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [validationMessage, setValidationMessage] = useState<string | null>(null);
 
-  function handleSignUp() {
-    setErrorMessage(null);
-    if (!email && !password && !passwordConfirmation) {
-      setErrorMessage('All fields are required.');
-    } else if (password !== passwordConfirmation) {
-      setErrorMessage('Password and password confirmation do not match.');
-    } else {
-      signUp({ email, password });
+  const handleSignUp = useCallback(async () => {
+    setValidationMessage(null);
+    if (password !== passwordConfirmation) {
+      setValidationMessage('Passwords do not match');
+      return;
     }
-  }
-
-  useEffect(() => {
-    if (serverError) {
-      setErrorMessage(serverError);
-      setServerError(null);
-    }
-  }, [serverError]);
+    await signUp({ email, password });
+  }, [password, passwordConfirmation, email, signUp, setValidationMessage]);
 
   return (
     <ScreenWrapper>
-      <SafeAreaView style={{ width: '100%' }}>
-        <TextInput onChangeText={setEmail} value={email} placeholder="Email" kind="email" />
+      <HideKeyboard>
+        {error ? <Alert kind="error">{error}</Alert> : null}
+        {validationMessage ? <Alert kind="error">{validationMessage}</Alert> : null}
         <TextInput
+          label="Email"
+          onChangeText={setEmail}
+          value={email}
+          placeholder="Email"
+          kind="email"
+        />
+        <TextInput
+          label="Password"
           onChangeText={setPassword}
           value={password}
           placeholder="Password"
@@ -41,15 +40,15 @@ function SignUpScreen() {
           disabled={loading}
         />
         <TextInput
+          label="Confirm password"
           onChangeText={setPasswordConfirmation}
           value={passwordConfirmation}
           placeholder="Confirm Password"
           kind="password"
           disabled={loading}
         />
-        {errorMessage ? <Alert kind="error">{errorMessage}</Alert> : null}
-        <Button title="Sign Up" onPress={handleSignUp} disabled={loading} />
-      </SafeAreaView>
+        <Button title="Sign Up" onPress={() => handleSignUp()} disabled={loading} />
+      </HideKeyboard>
     </ScreenWrapper>
   );
 }

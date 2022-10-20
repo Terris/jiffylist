@@ -1,9 +1,9 @@
 import { useCallback, useEffect } from 'react';
-import { View } from 'react-native';
+import { SafeAreaView, View, Text } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { Feather } from '@expo/vector-icons';
-import { NavigationContainer, useNavigation } from '@react-navigation/native';
+import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import {
@@ -13,13 +13,13 @@ import {
   OpenSans_400Regular_Italic,
   OpenSans_700Bold_Italic,
 } from '@expo-google-fonts/open-sans';
-import { AuthContextProvider, useAuth } from './context/AuthContext';
 import HomeScreen from './screens/HomeScreen';
 import SettingsScreen from './screens/SettingsScreen';
 import SignUpScreen from './screens/SignUpScreen';
 import SignInScreen from './screens/SignInScreen';
 import { colors } from './styles/colors';
 import { RootTabsParamList, RootStackParamList } from './types/navigation.types';
+import { AuthContextProvider, useAuth } from './context/AuthContext';
 
 type glyph = keyof typeof Feather.glyphMap;
 
@@ -53,14 +53,16 @@ export default function App() {
   }
 
   return (
-    <View onLayout={onLayoutRootView} style={{ flex: 1 }}>
-      <AuthContextProvider>
-        <NavigationContainer>
-          <Routes />
-        </NavigationContainer>
-      </AuthContextProvider>
-      <StatusBar style="auto" />
-    </View>
+    <SafeAreaView style={{ flex: 1 }}>
+      <View onLayout={onLayoutRootView} style={{ flex: 1 }}>
+        <AuthContextProvider>
+          <NavigationContainer>
+            <Routes />
+          </NavigationContainer>
+        </AuthContextProvider>
+        <StatusBar style="auto" />
+      </View>
+    </SafeAreaView>
   );
 }
 
@@ -87,7 +89,7 @@ function Routes() {
 }
 
 function RootTabs() {
-  const { user } = useAuth();
+  const { session } = useAuth();
 
   return (
     <Tab.Navigator
@@ -109,9 +111,9 @@ function RootTabs() {
         tabBarInactiveTintColor: colors.inactive,
       })}
     >
-      {user ? (
+      {session && session.user ? (
         <>
-          <Tab.Screen name="Home" component={HomeScreen} options={{ headerTitle: 'Your Games' }} />
+          <Tab.Screen name="Home" component={HomeScreen} options={{ headerTitle: 'Your List' }} />
           <Tab.Screen name="Settings" component={SettingsScreen} />
         </>
       ) : (
