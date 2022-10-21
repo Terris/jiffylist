@@ -20,7 +20,7 @@ function Text({ children, bold, italic, color, style }: TextProps) {
           : italic
           ? styles.italicText
           : styles.text,
-        { color: color ?? colors.black },
+        { color: color ?? colors.darkGreen },
         style,
       ]}
     >

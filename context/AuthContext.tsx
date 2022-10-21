@@ -1,7 +1,7 @@
 import { createContext, useState, useContext, ReactNode, useEffect } from 'react';
 import { Session } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
-import type { UserProfileProps } from '../types/db.types';
+import type { UserProfileProps } from '../types/models.types';
 
 type AuthCredentials = {
   email: string;
@@ -118,7 +118,7 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
         username,
         website,
         avatar_url: avatarUrl,
-        updated_at: new Date(),
+        updated_at: new Date().toISOString(),
       };
       let { error } = await supabase.from('profiles').upsert(updates);
       if (error) {

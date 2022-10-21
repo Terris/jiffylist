@@ -14,6 +14,7 @@ import {
   OpenSans_700Bold_Italic,
 } from '@expo-google-fonts/open-sans';
 import HomeScreen from './screens/HomeScreen';
+import AddListItemScreen from './screens/AddListItemScreen';
 import SettingsScreen from './screens/SettingsScreen';
 import SignUpScreen from './screens/SignUpScreen';
 import SignInScreen from './screens/SignInScreen';
@@ -27,7 +28,7 @@ SplashScreen.preventAutoHideAsync();
 
 const menuIconMap: { [key: string]: glyph } = {
   Home: 'home',
-  'New Game': 'plus-circle',
+  New: 'plus-circle',
   Friends: 'users',
   Settings: 'settings',
   'Sign Up': 'user-plus',
@@ -95,6 +96,7 @@ function RootTabs() {
     <Tab.Navigator
       screenOptions={({ route }) => ({
         headerTitleStyle: {
+          color: colors.darkGreen,
           fontFamily: 'OpenSans_400Regular',
         },
         tabBarLabelStyle: {
@@ -107,13 +109,14 @@ function RootTabs() {
           }
           return;
         },
-        tabBarActiveTintColor: colors.primary,
-        tabBarInactiveTintColor: colors.inactive,
+        tabBarActiveTintColor: colors.darkGreen,
+        tabBarInactiveTintColor: colors.lightGreen,
       })}
     >
       {session && session.user ? (
         <>
           <Tab.Screen name="Home" component={HomeScreen} options={{ headerTitle: 'Your List' }} />
+          <Tab.Screen name="New" component={AddListItemScreen} />
           <Tab.Screen name="Settings" component={SettingsScreen} />
         </>
       ) : (

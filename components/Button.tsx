@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Pressable, Text, StyleSheet, PressableProps } from 'react-native';
+import { Pressable, StyleSheet, PressableProps } from 'react-native';
+import Text from './Text';
 import { colors } from '../styles/colors';
 
 interface ButtonProps extends PressableProps {
@@ -21,38 +22,40 @@ function Button({ title, disabled, warn, onPress }: ButtonProps) {
       onPressIn={() => setPressed(true)}
       onPressOut={() => setPressed(false)}
     >
-      <Text style={warn ? warnTextStyles : styles.text}>{title}</Text>
+      <Text bold style={warn ? warnTextStyles : styles.text}>
+        {title}
+      </Text>
     </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: colors.primary,
-    borderColor: colors.primary,
-    borderRadius: 3,
+    backgroundColor: colors.darkGreen,
+    borderColor: colors.darkGreen,
+    borderRadius: 6,
     borderWidth: 1,
     display: 'flex',
     justifyContent: 'center',
     marginBottom: 12,
-    padding: 14,
+    padding: 18,
   },
   buttonPressed: {
-    opacity: 0.5,
+    opacity: 0.75,
   },
   buttonDisabled: {
-    backgroundColor: colors.primaryLight,
-    borderColor: colors.primaryLight,
+    opacity: 0.25,
   },
   buttonWarn: {
     backgroundColor: colors.alert,
     color: colors.white,
   },
   text: {
-    fontFamily: 'OpenSans_400Regular',
     width: '100%',
     textAlign: 'center',
     color: colors.white,
+    textTransform: 'uppercase',
+    letterSpacing: 2,
   },
   warnText: {
     color: colors.white,

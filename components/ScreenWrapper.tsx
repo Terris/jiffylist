@@ -1,5 +1,6 @@
 import { ReactNode } from 'react';
 import { View, StyleSheet } from 'react-native';
+import { colors } from '../styles/colors';
 
 interface ScreenWrapperProps {
   children: ReactNode;
@@ -11,9 +12,9 @@ function ScreenWrapper({ children }: ScreenWrapperProps) {
 
 const styles = StyleSheet.create({
   wrapper: {
+    backgroundColor: colors.white,
     width: '100%',
     alignItems: 'flex-start',
-    backgroundColor: '#fff',
     flex: 1,
     justifyContent: 'flex-start',
     padding: 10,

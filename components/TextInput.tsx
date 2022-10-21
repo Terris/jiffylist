@@ -15,9 +15,13 @@ interface TextInputProps extends PrimitiveTextInputProps {
 function TextInput({ onChangeText, value, label, placeholder, kind, disabled }: TextInputProps) {
   return (
     <>
-      {label && <Text>{label}</Text>}
+      {label && (
+        <Text bold style={styles.label}>
+          {label}
+        </Text>
+      )}
       <PrimitiveTextInput
-        style={styles.input}
+        style={disabled ? disabledInputStyles : styles.input}
         onChangeText={onChangeText}
         value={value}
         placeholder={placeholder}
@@ -47,13 +51,24 @@ function TextInput({ onChangeText, value, label, placeholder, kind, disabled }: 
 const styles = StyleSheet.create({
   input: {
     fontFamily: 'OpenSans_400Regular',
-    backgroundColor: colors.border.primary,
-    borderColor: colors.border.primary,
-    borderRadius: 3,
+    backgroundColor: colors.lightGreen,
+    borderColor: colors.lightGreen,
+    borderRadius: 6,
     borderWidth: 1,
     marginBottom: 12,
-    padding: 14,
+    padding: 18,
+  },
+  inputDisabled: {
+    opacity: 0.5,
+  },
+  label: {
+    textTransform: 'uppercase',
+    letterSpacing: 1.75,
+    fontSize: 10,
+    marginBottom: 4,
   },
 });
+
+const disabledInputStyles = StyleSheet.flatten([styles.input, styles.inputDisabled]);
 
 export default TextInput;

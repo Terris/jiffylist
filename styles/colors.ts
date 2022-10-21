@@ -1,15 +1,15 @@
 export const colors = {
-  black: '#000F08',
+  green: '#638475',
+  darkGreen: '#395448',
+  lightGreen: '#9cbaad',
+  black: '#333333',
   white: '#ffffff',
-  darkJungleGreen: '#000F08',
-  pineGreen: '#136F63',
-  citrine: '#E0CA3C',
-  coquilicot: '#F34213',
-  russionViolet: '#3E2F5B',
-  lightGray: '#ededed',
+  yellow: '#EEE1B3',
+  lightGray: '#fafafa',
+
   // Usage
   // ==============================
-  primary: '#136F63', // pineGreen
+  primary: '#638475',
   primaryDark: '#0c4740',
   primaryLight: '#1bcfb7',
   inactive: '#abb3a1',
